@@ -1,0 +1,83 @@
+<footer class="bg-dark text-white py-5 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <h5 class="mb-3">{{ portfolio_profile.name }}</h5>
+                <p class="text-muted">{{ portfolio_profile.short_bio }}</p>
+                <div class="d-flex gap-3">
+                    {% if portfolio_profile.linkedin_url %}
+                    <a href="{{ portfolio_profile.linkedin_url }}" class="text-white" target="_blank">
+                        <i class="fab fa-linkedin fa-lg"></i>
+                    </a>
+                    {% endif %}
+                    {% if portfolio_profile.github_url %}
+                    <a href="{{ portfolio_profile.github_url }}" class="text-white" target="_blank">
+                        <i class="fab fa-github fa-lg"></i>
+                    </a>
+                    {% endif %}
+                    {% if portfolio_profile.twitter_url %}
+                    <a href="{{ portfolio_profile.twitter_url }}" class="text-white" target="_blank">
+                        <i class="fab fa-twitter fa-lg"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="col-lg-2 mb-4 mb-lg-0">
+                <h5 class="mb-3">Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'core:home' %}" class="text-muted text-decoration-none">Home</a></li>
+                    <li><a href="{% url 'core:about' %}" class="text-muted text-decoration-none">About</a></li>
+                    <li><a href="{% url 'core:projects' %}" class="text-muted text-decoration-none">Projects</a></li>
+                    <li><a href="{% url 'core:contact' %}" class="text-muted text-decoration-none">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 mb-4 mb-lg-0">
+                <h5 class="mb-3">Contact Info</h5>
+                <ul class="list-unstyled text-muted">
+                    <li class="mb-2">
+                        <i class="fas fa-envelope me-2"></i>
+                        <a href="mailto:{{ portfolio_profile.email }}" class="text-muted text-decoration-none">
+                            {{ portfolio_profile.email }}
+                        </a>
+                    </li>
+                    {% if portfolio_profile.phone %}
+                    <li class="mb-2">
+                        <i class="fas fa-phone me-2"></i>
+                        <a href="tel:{{ portfolio_profile.phone }}" class="text-muted text-decoration-none">
+                            {{ portfolio_profile.phone }}
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if portfolio_profile.location %}
+                    <li class="mb-2">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        {{ portfolio_profile.location }}
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <div class="col-lg-3">
+                <h5 class="mb-3">Newsletter</h5>
+                <p class="text-muted small">Subscribe to get updates on my latest projects and articles.</p>
+                <form class="d-flex">
+                    <input type="email" class="form-control form-control-sm me-2" placeholder="Your email">
+                    <button type="submit" class="btn btn-primary btn-sm">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        
+        <hr class="my-4">
+        
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                <p class="text-muted mb-0">&copy; 2024 {{ portfolio_profile.name }}. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <p class="text-muted mb-0">Made with <i class="fas fa-heart text-danger"></i> using Django</p>
+            </div>
+        </div>
+    </div>
+</footer>

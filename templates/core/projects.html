@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Projects - {{ portfolio_profile.name }}{% endblock %}
+
+{% block content %}
+<!-- Projects Header -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 fw-bold mb-3">My Projects</h1>
+                <p class="lead">A collection of my recent work and personal projects</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Projects Filter -->
+<section class="py-4 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary active" data-filter="all">All Projects</button>
+                        <button type="button" class="btn btn-outline-primary" data-filter="web">Web Apps</button>
+                        <button type="button" class="btn btn-outline-primary" data-filter="mobile">Mobile Apps</button>
+                        <button type="button" class="btn btn-outline-primary" data-filter="other">Other</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Projects Grid -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4" id="projects-grid">
+            {% for project in projects %}
+            <div class="col-lg-4 col-md-6" data-type="{{ project.project_type }}">
+                <div class="card project-card h-100 shadow-sm">
+                    {% if project.featured_image %}
+                    <img src="{{ project.featured_image.url }}" 
+                         class="card-img-top" 
+                         alt="{{ project.title }}"
+                         style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title">{{ project.title }}</h5>
+                            {% if project.featured %}
+                            <span class="badge bg-warning">Featured</span>
+                            {% endif %}
+                        </div>
+                        
+                        <p class="card-text text-muted flex-grow-1">{{ project.short_description }}</p>
+                        
+                        <div class="mt-auto">
+                            <!-- Technologies -->
+                            <div class="mb-3">
+                                {% for tag in project.technologies_used.all|slice:":3" %}
+                                <span class="badge bg-light text-dark me-1">{{ tag.name }}</span>
+                                {% endfor %}
+                                {% if project.technologies_used.count > 3 %}
+                                <span class="badge bg-light text-dark">+{{ project.technologies_used.count|add:"-3" }}</span>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Project Type -->
+                            <p class="text-muted small mb-2">
+                                <i class="fas fa-{{ project.project_type|default:'code' }} me-1"></i>
+                                {{ project.get_project_type_display }}
+                            </p>
+                            
+                            <!-- Dates -->
+                            <p class="text-muted small mb-3">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ project.start_date|date:"M Y" }} - 
+                                {% if project.is_ongoing %}
+                                    Present
+                                {% else %}
+                                    {{ project.end_date|date:"M Y" }}
+                                {% endif %}
+                            </p>
+                            
+                            <!-- Action Buttons -->
+                            <div class="d-grid gap-2 d-md-flex">
+                                <a href="{% url 'core:project_detail' project.slug %}" 
+                                   class="btn btn-primary btn-sm flex-fill">
+                                    <i class="fas fa-eye me-1"></i> View Details
+                                </a>
+                                {% if project.demo_url %}
+                                <a href="{{ project.demo_url }}" 
+                                   target="_blank" 
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                {% endif %}
+                                {% if project.github_url %}
+                                <a href="{{ project.github_url }}" 
+                                   target="_blank" 
+                                   class="btn btn-outline-dark btn-sm">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                <h3 class="text-muted">No Projects Yet</h3>
+                <p class="text-muted">Check back soon for my latest projects!</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <nav aria-label="Project pagination" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const projectCards = document.querySelectorAll('.project-card');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const filterValue = this.getAttribute('data-filter');
+            
+            projectCards.forEach(card => {
+                const projectType = card.parentElement.getAttribute('data-type');
+                
+                if (filterValue === 'all' || projectType === filterValue) {
+                    card.parentElement.style.display = 'block';
+                } else {
+                    card.parentElement.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
