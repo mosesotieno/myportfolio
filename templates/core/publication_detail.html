@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="card-title">{{ publication.title }}</h2>
+            
+            {% if publication.authors %}
+            <p><strong>Authors:</strong> {{ publication.authors }}</p>
+            {% endif %}
+
+            {% if publication.journal %}
+            <p><strong>Journal:</strong> {{ publication.journal }}</p>
+            {% endif %}
+
+            <p><strong>Year:</strong> {{ publication.year }}</p>
+
+            {% if publication.link %}
+            <p>
+                <a href="{{ publication.link }}" target="_blank" class="btn btn-primary">
+                    Read Full Publication
+                </a>
+            </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a href="{% url 'core:publications' %}" class="btn btn-outline-secondary">
+            ← Back to Publications
+        </a>
+    </div>
+</div>
+{% endblock %}

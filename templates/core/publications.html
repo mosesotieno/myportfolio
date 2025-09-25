@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Publications - {{ portfolio_profile.name }}{% endblock %}
+
+{% block content %}
+<!-- Publications Header -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 fw-bold mb-3">My Publications</h1>
+                <p class="lead">A collection of my research articles, papers, and reports</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Publications Filter -->
+<section class="py-4 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary active" data-filter="all">All Publications</button>
+                    {% for type, label in publication_types %}
+                    <button type="button" class="btn btn-outline-primary" data-filter="{{ type }}">{{ label }}</button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Publications Grid -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4" id="publications-grid">
+            {% for pub in publications %}
+            <div class="col-lg-6 col-md-12" data-type="{{ pub.publication_type }}">
+                <div class="card h-100 shadow-sm border-0">
+                    
+                    <div class="card-body d-flex flex-column">
+                        
+                        <!-- Title + Featured -->
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">{{ pub.title }}</h5>
+                            {% if pub.featured %}
+                            <span class="badge bg-warning text-dark">Featured</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Authors -->
+                        <p class="card-text text-muted small mb-2">
+                            <i class="fas fa-user-friends me-1"></i>
+                            {{ pub.authors }}
+                        </p>
+                        
+                        <!-- Journal + Year -->
+                        <p class="card-text text-muted small mb-2">
+                            <i class="fas fa-book me-1"></i>
+                            {{ pub.journal }} ({{ pub.year }})
+                        </p>
+                        
+                        <!-- Abstract / Short description -->
+                        {% if pub.abstract %}
+                        <p class="card-text text-muted flex-grow-1">{{ pub.abstract|truncatewords:30 }}</p>
+                        {% endif %}
+                        
+                        <!-- Tags -->
+                        <div class="mb-3">
+                            {% for tag in pub.topics.all|slice:":3" %}
+                                <span class="badge bg-light text-dark me-1">{{ tag.name }}</span>
+                            {% endfor %}
+                            {% if pub.topics.count > 3 %}
+                                <span class="badge bg-light text-dark">+{{ pub.topics.count|add:"-3" }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-2 d-md-flex">
+                            {% if pub.doi %}
+                            <a href="https://doi.org/{{ pub.doi }}" target="_blank" 
+                               class="btn btn-primary btn-sm flex-fill">
+                                <i class="fas fa-external-link-alt me-1"></i> View DOI
+                            </a>
+                            {% endif %}
+                            {% if pub.pdf %}
+                            <a href="{{ pub.pdf.url }}" target="_blank" 
+                               class="btn btn-outline-dark btn-sm">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                <h3 class="text-muted">No Publications Yet</h3>
+                <p class="text-muted">Check back soon for my latest work!</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <nav aria-label="Publication pagination" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const publicationCards = document.querySelectorAll('#publications-grid > div');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+
+            const filterValue = this.getAttribute('data-filter');
+
+            publicationCards.forEach(card => {
+                const pubType = card.getAttribute('data-type');
+                if (filterValue === 'all' || pubType === filterValue) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
