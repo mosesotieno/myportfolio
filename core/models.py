@@ -44,18 +44,38 @@ class Profile(models.Model):
 
 # Add new models for enhanced CV features
 class Publication(models.Model):
+    PUBLICATION_TYPES = [
+        ("journal", "Journal Article"),
+        ("conference", "Conference Paper"),
+        ("report", "Technical Report"),
+        ("book", "Book / Chapter"),
+        ("other", "Other"),
+    ]
+
     title = models.TextField()
-    authors = models.TextField(blank=True)
+    authors = models.TextField(blank=True, help_text="List of authors as they appear in the publication")
+    abstract = models.TextField(blank=True)
     journal = models.CharField(max_length=300, blank=True)
     year = models.PositiveIntegerField()
-    link = models.URLField(blank=True)
+    publication_type = models.CharField(max_length=50, choices=PUBLICATION_TYPES, default="journal")
+
+    doi = models.CharField(max_length=200, blank=True, help_text="DOI identifier if available")
+    link = models.URLField(blank=True, help_text="Direct link to publication online")
+    pdf = models.FileField(upload_to="publications/pdfs/", blank=True, null=True)
+
+    topics = TaggableManager(blank=True, help_text="Add keywords or research topics")
+
+    featured = models.BooleanField(default=False)
     order = models.PositiveIntegerField(default=0)
 
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
-        ordering = ['-year', 'order']
+        ordering = ["-year", "order"]
 
     def __str__(self):
-        return self.title
+        return f"{self.title} ({self.year})"
 
 class Referee(models.Model):
     name = models.CharField(max_length=200)
@@ -71,46 +91,49 @@ class Referee(models.Model):
     def __str__(self):
         return f"{self.name} - {self.organization}"
 
-class SkillCategory(models.Model):
-    name = models.CharField(max_length=100)
-    order = models.PositiveIntegerField(default=0)
-
-    class Meta:
-        verbose_name_plural = "Skill Categories"
-        ordering = ['order']
-
-    def __str__(self):
-        return self.name
-
-class Skill(models.Model):
-    PROFICIENCY_LEVELS = [
-        (1, 'Beginner'),
-        (2, 'Intermediate'),
-        (3, 'Advanced'),
-        (4, 'Expert'),
-    ]
-
-    name = models.CharField(max_length=100)
-    category = models.ForeignKey(SkillCategory, on_delete=models.CASCADE, related_name='skills')
-    proficiency = models.IntegerField(choices=PROFICIENCY_LEVELS, default=3)
-    order = models.PositiveIntegerField(default=0)
-    show_on_main = models.BooleanField(default=True)
-
-    class Meta:
-        ordering = ['category__order', 'order']
-
-    def __str__(self):
-        return self.name
-
-    def get_proficiency_percentage(self):
-        return (self.proficiency / 4) * 100
-
 class Project(models.Model):
     PROJECT_TYPES = [
         ('web', 'Web Application'),
         ('mobile', 'Mobile Application'),
         ('desktop', 'Desktop Application'),
+        ('data-science', 'Data Science / Analysis'),
+        ('research', 'Research Project'),
         ('other', 'Other'),
+
+    ]
+
+    ICON_CHOICES = [
+        ('fas fa-code', 'Code'),
+        ('fas fa-database', 'Database'),
+        ('fas fa-chart-line', 'Chart / Analytics'),
+        ('fas fa-virus', 'Health / Virus'),
+        ('fas fa-cloud-sun', 'Climate / Weather'),
+        ('fas fa-female', 'Female / Gender'),
+        ('fas fa-mobile-alt', 'Mobile'),
+        ('fas fa-laptop', 'Laptop'),
+        ('fas fa-project-diagram', 'Project'),
+    ]
+
+    BG_CHOICES = [
+        ('bg-primary', 'Primary'),
+        ('bg-success', 'Success'),
+        ('bg-warning', 'Warning'),
+        ('bg-danger', 'Danger'),
+        ('bg-info', 'Info'),
+        ('bg-dark', 'Dark'),
+        ('bg-light', 'Light'),
+    ]
+
+    TEXT_COLOR_CHOICES = [
+        ('text-white', 'White'),
+        ('text-dark', 'Dark'),
+        ('text-muted', 'Muted'),
+    ]
+
+    STATUS_CHOICES = [
+        ('planned', 'Planned'),
+        ('in-progress', 'In Progress'),
+        ('completed', 'Completed'),
     ]
 
     title = models.CharField(max_length=200)
@@ -118,19 +141,28 @@ class Project(models.Model):
     description = models.TextField()
     short_description = models.CharField(max_length=300)
     project_type = models.CharField(max_length=20, choices=PROJECT_TYPES, default='web')
-    
+
+    # New fields for styling
+    icon_class = models.CharField(max_length=50, choices=ICON_CHOICES, default='fas fa-code')
+    background_class = models.CharField(max_length=20, choices=BG_CHOICES, default='bg-light')
+    text_color_class = models.CharField(max_length=20, choices=TEXT_COLOR_CHOICES, default='text-white')
+    card_class = models.CharField(max_length=50, blank=True, default="")
+
     # Project details
-    featured_image = models.ImageField(upload_to='projects/')
+    featured_image = models.ImageField(upload_to='projects/', blank=True)
     demo_url = models.URLField(blank=True)
     github_url = models.URLField(blank=True)
+    button_text = models.CharField(max_length=50, blank=True)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
-    
+
     # Metadata
     technologies_used = TaggableManager()
     featured = models.BooleanField(default=False)
     order = models.PositiveIntegerField(default=0)
-    
+    category = models.CharField(max_length=100, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -141,7 +173,7 @@ class Project(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('project_detail', kwargs={'slug': self.slug})
+        return reverse('core:project_detail', kwargs={'slug': self.slug})
 
     @property
     def is_ongoing(self):
@@ -219,3 +251,53 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"Message from {self.name}: {self.subject}"
+    
+class Specialization(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    icon_class = models.CharField(max_length=100)  # e.g. "fas fa-virus-slash fa-3x text-primary"
+
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order"]
+
+    def __str__(self):
+        return self.title
+    
+class SkillCategory(models.Model):
+    name = models.CharField(max_length=100)
+    icon_class = models.CharField(max_length=100, blank=True, help_text="FontAwesome class, e.g. 'fas fa-chart-bar'")
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return self.name
+
+class Skill(models.Model):
+    category = models.ForeignKey(SkillCategory, related_name="skills", on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    proficiency = models.PositiveIntegerField(help_text="Percentage 0–100")
+    color_class = models.CharField(
+        max_length=20,
+        choices=[
+            ("bg-primary", "Primary"),
+            ("bg-success", "Success"),
+            ("bg-warning", "Warning"),
+            ("bg-danger", "Danger"),
+            ("bg-info", "Info"),
+        ],
+        default="bg-primary"
+    )
+    order = models.PositiveIntegerField(default=0)
+
+    # 👇 new field
+    show_on_main = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"{self.name} ({self.proficiency}%)"

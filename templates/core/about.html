@@ -106,7 +106,7 @@
             <div class="col-md-3 mb-4">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
-                        <h3 class="display-4 text-primary fw-bold">5+</h3>
+                        <h3 class="display-4 text-primary fw-bold">{{ publications|length }}+</h3>
                         <p class="text-muted">Publications</p>
                     </div>
                 </div>
@@ -116,117 +116,35 @@
 </section>
 
 <!-- Skills Section -->
-<section class="py-5 bg-light">
+<section class="py-5 bg-dark text-white">
     <div class="container">
-        <h2 class="text-center mb-5">Technical Skills</h2>
-        
-        <!-- Statistics Skills -->
-        <div class="mb-5">
-            <h3 class="h4 mb-3"><i class="fas fa-chart-bar text-primary me-2"></i>Statistics & Data Science</h3>
-            <div class="row">
-                <div class="col-lg-6 mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-medium">Advanced Statistical Analysis</span>
-                        <span class="text-muted">Expert</span>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-primary" style="width: 95%"></div>
-                    </div>
-                </div>
-                <div class="col-lg-6 mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-medium">R Programming</span>
-                        <span class="text-muted">Expert</span>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-primary" style="width: 90%"></div>
-                    </div>
-                </div>
-                <div class="col-lg-6 mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-medium">Python for Data Science</span>
-                        <span class="text-muted">Advanced</span>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-primary" style="width: 85%"></div>
-                    </div>
-                </div>
-                <div class="col-lg-6 mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-medium">Machine Learning</span>
-                        <span class="text-muted">Advanced</span>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-primary" style="width: 80%"></div>
-                    </div>
-                </div>
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">Technical Expertise</h2>
+                <p class="lead">Combining statistical rigor with cutting-edge technology</p>
             </div>
         </div>
 
-        <!-- Programming Skills -->
-        <div class="mb-5">
-            <h3 class="h4 mb-3"><i class="fas fa-code text-primary me-2"></i>Programming & Development</h3>
-            <div class="row">
-                <div class="col-lg-6 mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-medium">Survey Solutions/ODK</span>
-                        <span class="text-muted">Expert</span>
+        <div class="row g-4">
+            {% for category in skill_categories %}
+            <div class="col-md-6">
+                <div class="skill-category">
+                    <h4 class="h5 mb-3"><i class="{{ category.icon_class }} me-2"></i>{{ category.name }}</h4>
+                    
+                    {% for skill in category.skills.all %}
+                    <div class="skill-item mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>{{ skill.name }}</span>
+                            <span>{{ skill.proficiency }}%</span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar {{ skill.color_class }}" style="width: {{ skill.proficiency }}%"></div>
+                        </div>
                     </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-success" style="width: 95%"></div>
-                    </div>
-                </div>
-                <div class="col-lg-6 mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-medium">Web Development</span>
-                        <span class="text-muted">Advanced</span>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-success" style="width: 85%"></div>
-                    </div>
-                </div>
-                <div class="col-lg-6 mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-medium">Git Version Control</span>
-                        <span class="text-muted">Advanced</span>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-success" style="width: 85%"></div>
-                    </div>
-                </div>
-                <div class="col-lg-6 mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-medium">Database Management</span>
-                        <span class="text-muted">Expert</span>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-success" style="width: 90%"></div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
-        </div>
-
-        <!-- Tools & Technologies -->
-        <div class="mb-5">
-            <h3 class="h4 mb-3"><i class="fas fa-tools text-primary me-2"></i>Tools & Technologies</h3>
-            <div class="row">
-                <div class="col-md-6">
-                    <ul class="list-unstyled">
-                        <li><i class="fas fa-check text-success me-2"></i>Power BI & Tableau</li>
-                        <li><i class="fas fa-check text-success me-2"></i>MySQL, PostgreSQL</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Stata, SPSS</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Microsoft Office Suite</li>
-                    </ul>
-                </div>
-                <div class="col-md-6">
-                    <ul class="list-unstyled">
-                        <li><i class="fas fa-check text-success me-2"></i>HTML, CSS, JavaScript</li>
-                        <li><i class="fas fa-check text-success me-2"></i>WordPress</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Batch Programming</li>
-                        <li><i class="fas fa-check text-success me-2"></i>SFTP/FTP Tools</li>
-                    </ul>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </section>
@@ -337,7 +255,7 @@
         </div>
 
         <div class="text-center mt-4">
-            <a href="{% url 'core:about' %}#publications" class="btn btn-outline-primary">
+            <a href="{% url 'core:publications' %}" class="btn btn-outline-primary">
                 View All Publications <i class="fas fa-arrow-right ms-2"></i>
             </a>
         </div>

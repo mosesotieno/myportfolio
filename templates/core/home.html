@@ -11,7 +11,7 @@
             <div class="col-lg-6">
                 <div class="hero-content">
                     <span class="badge bg-primary mb-3">Data Scientist & Statistician</span>
-                    <h1 class="display-3 fw-bold mb-3">Hi, I'm <span class="text-primary">{{ portfolio_profile.name.split.0 }}</span></h1>
+                    <h1 class="display-3 fw-bold mb-3">Hi, I'm <span class="text-primary">{{ portfolio_profile.name.split.1 }}</span></h1>
                     <h2 class="h3 text-light mb-4">{{ portfolio_profile.title }}</h2>
                     <p class="lead mb-4">{{ portfolio_profile.short_bio }}</p>
                     
@@ -30,7 +30,7 @@
                         </div>
                         <div class="col-4">
                             <div class="text-center">
-                                <h3 class="fw-bold text-primary mb-1">5+</h3>
+                                <h3 class="fw-bold text-primary mb-1">{{ publications|length }}+</h3>
                                 <small>Publications</small>
                             </div>
                         </div>
@@ -79,41 +79,21 @@
                 <p class="lead">Transforming complex healthcare data into actionable insights for better patient outcomes</p>
             </div>
         </div>
-        
-        <div class="row g-4">
+
+        <div class="row g-4" id="specializations-grid">
+            {% for spec in specializations %}
             <div class="col-md-4">
                 <div class="card specialization-card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
                         <div class="specialization-icon mb-3">
-                            <i class="fas fa-virus-slash fa-3x text-primary"></i>
+                            <i class="{{ spec.icon_class }}"></i>
                         </div>
-                        <h4 class="h5 fw-bold">HIV/AIDS Research</h4>
-                        <p class="text-muted">Advanced statistical analysis and data management for HIV prevention and treatment studies</p>
+                        <h4 class="h5 fw-bold">{{ spec.title }}</h4>
+                        <p class="text-muted">{{ spec.description }}</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card specialization-card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center p-4">
-                        <div class="specialization-icon mb-3">
-                            <i class="fas fa-temperature-high fa-3x text-success"></i>
-                        </div>
-                        <h4 class="h5 fw-bold">Climate & Health</h4>
-                        <p class="text-muted">Studying the impact of climate change on disease patterns using wearable technology</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card specialization-card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center p-4">
-                        <div class="specialization-icon mb-3">
-                            <i class="fas fa-database fa-3x text-info"></i>
-                        </div>
-                        <h4 class="h5 fw-bold">Data Systems</h4>
-                        <p class="text-muted">Building robust data collection and management systems for large-scale research projects</p>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </section>
@@ -129,74 +109,66 @@
         </div>
 
         <div class="row g-4">
-            <!-- Project 1 -->
+            {% for project in featured_projects %}
             <div class="col-lg-4 col-md-6">
                 <div class="card project-card h-100 shadow-sm">
-                    <div class="card-img-top bg-primary text-white text-center py-4">
-                        <i class="fas fa-virus fa-3x"></i>
+                    <!-- Project Icon + Background -->
+                    <div class="card-img-top {{ project.background_class }} {{ project.text_color_class }} text-center py-4">
+                        <i class="{{ project.icon_class }}"></i>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">EAPoC-VL Project</h5>
-                        <p class="card-text text-muted">Point of Care HIV Viral Load Monitoring for Children and Adolescents in East Africa</p>
-                        <div class="technologies mb-3">
-                            <span class="badge bg-light text-dark">R</span>
-                            <span class="badge bg-light text-dark">Python</span>
-                            <span class="badge bg-light text-dark">SQL Server</span>
-                        </div>
-                        <div class="project-highlights">
-                            <small class="text-muted"><i class="fas fa-calendar me-1"></i>Feb 2025 - Present</small>
-                            <br>
-                            <small class="text-muted"><i class="fas fa-building me-1"></i>KEMRI/CGHR</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Project 2 -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card project-card h-100 shadow-sm">
-                    <div class="card-img-top bg-success text-white text-center py-4">
-                        <i class="fas fa-cloud-sun fa-3x"></i>
-                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">Climate & Wearables</h5>
-                        <p class="card-text text-muted">Assessing Climate Change Impact on Malaria and HIV using Wearable Technology</p>
-                        <div class="technologies mb-3">
-                            <span class="badge bg-light text-dark">Python</span>
-                            <span class="badge bg-light text-dark">R</span>
-                            <span class="badge bg-light text-dark">Machine Learning</span>
-                        </div>
-                        <div class="project-highlights">
-                            <small class="text-muted"><i class="fas fa-calendar me-1"></i>Oct 2024 - Nov 2024</small>
-                            <br>
-                            <small class="text-muted"><i class="fas fa-building me-1"></i>KEMRI/CGHR</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        <!-- Project Title -->
+                        <h5 class="card-title">{{ project.title }}</h5>
 
-            <!-- Project 3 -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card project-card h-100 shadow-sm">
-                    <div class="card-img-top bg-warning text-white text-center py-4">
-                        <i class="fas fa-female fa-3x"></i>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title">DREAMS Partnership</h5>
-                        <p class="card-text text-muted">HIV Prevention for Adolescent Girls and Young Women in Kenya and South Africa</p>
+                        <!-- Short Description -->
+                        <p class="card-text text-muted">{{ project.short_description }}</p>
+
+                        <!-- Technologies -->
                         <div class="technologies mb-3">
-                            <span class="badge bg-light text-dark">Statistical Analysis</span>
-                            <span class="badge bg-light text-dark">Data Management</span>
-                            <span class="badge bg-light text-dark">Survey Solutions</span>
+                            {% for tech in project.technologies_used.all %}
+                                <span class="badge bg-light text-dark">{{ tech.name }}</span>
+                            {% endfor %}
                         </div>
+
+                        <!-- Metadata -->
                         <div class="project-highlights">
-                            <small class="text-muted"><i class="fas fa-calendar me-1"></i>Feb 2023 - Sep 2024</small>
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ project.start_date|date:"M Y" }}
+                                {% if project.end_date %} - {{ project.end_date|date:"M Y" }}{% else %} - Present{% endif %}
+                            </small>
                             <br>
-                            <small class="text-muted"><i class="fas fa-building me-1"></i>KEMRI/CGHR</small>
+                            <small class="text-muted">
+                                <i class="fas fa-building me-1"></i>{{ project.project_type|capfirst }}
+                            </small>
+                            {% if project.category %}
+                                <br><small class="badge bg-secondary">{{ project.category }}</small>
+                            {% endif %}
+                            {% if project.status %}
+                                <br><small class="badge bg-info">{{ project.status|capfirst }}</small>
+                            {% endif %}
+                        </div>
+
+                        <!-- Links -->
+                        <div class="mt-3">
+                            {% if project.demo_url %}
+                                <a href="{{ project.demo_url }}" class="btn btn-outline-primary btn-sm me-2">
+                                    {{ project.button_text|default:"Live Demo" }}
+                                </a>
+                            {% endif %}
+                            {% if project.github_url %}
+                                <a href="{{ project.github_url }}" class="btn btn-outline-dark btn-sm">
+                                    GitHub
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
+            {% empty %}
+                <p class="text-center">No featured projects available.</p>
+            {% endfor %}
         </div>
 
         <div class="text-center mt-5">
@@ -207,7 +179,9 @@
     </div>
 </section>
 
+
 <!-- Skills Overview Section -->
+
 <section class="py-5 bg-dark text-white">
     <div class="container">
         <div class="row">
@@ -218,71 +192,67 @@
         </div>
 
         <div class="row g-4">
+            {% for category in skill_categories|slice:":2" %}
             <div class="col-md-6">
                 <div class="skill-category">
-                    <h4 class="h5 mb-3"><i class="fas fa-chart-bar me-2"></i>Data Science & Statistics</h4>
+                    <h4 class="h5 mb-3"><i class="{{ category.icon_class }} me-2"></i>{{ category.name }}</h4>
+                    
+                    {% for skill in category.skills.all %}
                     <div class="skill-item mb-3">
                         <div class="d-flex justify-content-between mb-1">
-                            <span>Advanced Statistical Analysis</span>
-                            <span>95%</span>
+                            <span>{{ skill.name }}</span>
+                            <span>{{ skill.proficiency }}%</span>
                         </div>
                         <div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-primary" style="width: 95%"></div>
+                            <div class="progress-bar {{ skill.color_class }}" style="width: {{ skill.proficiency }}%"></div>
                         </div>
                     </div>
-                    <div class="skill-item mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span>R Programming</span>
-                            <span>90%</span>
-                        </div>
-                        <div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-primary" style="width: 90%"></div>
-                        </div>
-                    </div>
-                    <div class="skill-item mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span>Python Data Science</span>
-                            <span>85%</span>
-                        </div>
-                        <div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-primary" style="width: 85%"></div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
 
-            <div class="col-md-6">
-                <div class="skill-category">
-                    <h4 class="h5 mb-3"><i class="fas fa-laptop-code me-2"></i>Programming & Tools</h4>
-                    <div class="skill-item mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span>Survey Solutions/ODK</span>
-                            <span>95%</span>
-                        </div>
-                        <div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-success" style="width: 95%"></div>
-                        </div>
-                    </div>
-                    <div class="skill-item mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span>Database Management</span>
-                            <span>90%</span>
-                        </div>
-                        <div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-success" style="width: 90%"></div>
-                        </div>
-                    </div>
-                    <div class="skill-item mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span>Web Development</span>
-                            <span>85%</span>
-                        </div>
-                        <div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-success" style="width: 85%"></div>
+
+
+
+<!-- Latest Publications Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">Recent Publications</h2>
+                <p class="lead">Contributing to scientific knowledge in healthcare research</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            {% for publication in publications|slice:":3" %}
+            <div class="col-lg-4">
+                <div class="card publication-card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <span class="badge bg-primary mb-2">{{ publication.year }}</span>
+                        <h5 class="card-title">
+                            <a href="{% url 'core:publication_detail' publication.pk %}" class="stretched-link text-decoration-none text-dark">
+                                {{ publication.title|truncatewords:10 }}
+                            </a>
+                        </h5>
+                        <p class="card-text text-muted small">{{ publication.journal }}</p>
+                        <div class="publication-authors">
+                            <small class="text-muted">{{ publication.authors|truncatewords:5 }}</small>
                         </div>
                     </div>
                 </div>
             </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'core:publications' %}" class="btn btn-outline-primary">
+                View All Publications <i class="fas fa-arrow-right ms-2"></i>
+            </a>
         </div>
     </div>
 </section>
@@ -307,40 +277,7 @@
     </div>
 </section>
 
-<!-- Latest Publications Section -->
-<section class="py-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3">Recent Publications</h2>
-                <p class="lead">Contributing to scientific knowledge in healthcare research</p>
-            </div>
-        </div>
 
-        <div class="row g-4">
-            {% for publication in publications|slice:":3" %}
-            <div class="col-lg-4">
-                <div class="card publication-card h-100 border-0 shadow-sm">
-                    <div class="card-body">
-                        <span class="badge bg-primary mb-2">{{ publication.year }}</span>
-                        <h5 class="card-title">{{ publication.title|truncatewords:10 }}</h5>
-                        <p class="card-text text-muted small">{{ publication.journal }}</p>
-                        <div class="publication-authors">
-                            <small class="text-muted">{{ publication.authors|truncatewords:5 }}</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="text-center mt-4">
-            <a href="{% url 'core:about' %}#publications" class="btn btn-outline-primary">
-                View All Publications <i class="fas fa-arrow-right ms-2"></i>
-            </a>
-        </div>
-    </div>
-</section>
 {% endblock %}
 
 {% block extra_css %}

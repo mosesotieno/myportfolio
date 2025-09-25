@@ -12,7 +12,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.http import JsonResponse
 from django.views.generic import ListView, DetailView
-from .models import Profile, Project, Experience, Education, Skill, ContactMessage, Publication, Referee
+from .models import Profile, Project, Experience, Education, Skill, ContactMessage, Publication, Referee, Specialization,SkillCategory
 from .forms import ContactForm
 
 def home(request):
@@ -20,14 +20,18 @@ def home(request):
     skills = Skill.objects.filter(show_on_main=True).select_related('category')
     featured_projects = Project.objects.filter(featured=True)[:6]
     experiences = Experience.objects.all()[:3]  # Show latest 3
-    publications = Publication.objects.all()[:3]  # Add this line for homepage
+    publications = Publication.objects.all() # Add this line for homepage
+    specializations = Specialization.objects.all()
+    skill_categories = SkillCategory.objects.prefetch_related("skills").all()
     
     context = {
         'profile': profile,
         'skills': skills,
         'featured_projects': featured_projects,
         'experiences': experiences,
-        'publications': publications,  # Add this line
+        'publications': publications, 
+        "specializations": specializations, 
+        "skill_categories": skill_categories,
     }
     return render(request, 'core/home.html', context)
 
@@ -36,7 +40,7 @@ def about(request):
     skills = Skill.objects.all().select_related('category')
     experiences = Experience.objects.all()
     education = Education.objects.all()
-    publications = Publication.objects.all()[:3]  # Latest publications
+    publications = Publication.objects.all()
     referees = Referee.objects.all()
     
     # Group skills by category
@@ -56,13 +60,18 @@ def about(request):
     }
     return render(request, 'core/about.html', context)
 
-# ... rest of your views remain the same ...
+
 
 class ProjectListView(ListView):
     model = Project
     template_name = 'core/projects.html'
     context_object_name = 'projects'
     paginate_by = 9
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["project_types"] = Project.PROJECT_TYPES  # <-- comes from your model choices
+        return context
 
 class ProjectDetailView(DetailView):
     model = Project
@@ -71,11 +80,33 @@ class ProjectDetailView(DetailView):
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
 
+
+# --- Publications ---
+class PublicationListView(ListView):
+    model = Publication
+    template_name = "core/publications.html"
+    context_object_name = "publications"
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Publication.objects.all().order_by("-year", "order")
+
+class PublicationDetailView(DetailView):
+    model = Publication
+    template_name = "core/publication_detail.html"
+    context_object_name = "publication"
+
+class SpecializationListView(ListView):
+    model = Specialization
+    template_name = "core/specializations.html"
+    context_object_name = "specializations"
+
 def about(request):
     profile = Profile.objects.filter(is_active=True).first()
     skills = Skill.objects.all().select_related('category')
     experiences = Experience.objects.all()
     education = Education.objects.all()
+    publications = Publication.objects.all()[:3]  # Latest publications
     
     # Group skills by category
     skill_categories = {}
@@ -89,6 +120,7 @@ def about(request):
         'skill_categories': skill_categories,
         'experiences': experiences,
         'education': education,
+        'publications': publications,
     }
     return render(request, 'core/about.html', context)
 
